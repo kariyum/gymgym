@@ -8,6 +8,7 @@
 		<button class="day-btn">{day}</button>
 	{/each}
 </div>
+<h4>Today</h4>
 {#each data.data as work}
 	<div>
 		<div>
@@ -28,7 +29,7 @@
 		display: flex;
 		width: 100%;
 		overflow-x: scroll;
-        column-gap: 1rem;
+        column-gap: 0.3rem;
         row-gap: 0.5rem;
 		
         &::-webkit-scrollbar {
