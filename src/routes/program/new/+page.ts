@@ -1,51 +1,7 @@
+import type { Exercice } from '../../+page.js';
 
-export interface WorkoutProgram {
-    day: Date,
-    exercices: Exercice[],
-}
-
-export interface Exercice {
-    title: string,
-    muscle_groups: string[],
-    reps: number,
-    sets: number,
-    average_weight?: number,
-    weight_per_set?: WeightPerSet[],
-}
-
-export interface WeightPerSet {
-    set_number: number,
-    weight: number,
-}
-
-export async function load() {
-    const response: WorkoutProgram[] = [
-        {  
-            day: new Date(),
-            exercices: [
-                {
-                    title: "Bench Press",
-                    muscle_groups: [],
-                    reps: 12,
-                    sets: 4,
-                },
-                {
-                    title: "Incline Bench Press",
-                    muscle_groups: [],
-                    reps: 12,
-                    sets: 4,
-                },
-                {
-                    title: "Biceps",
-                    muscle_groups: [],
-                    reps: 12,
-                    sets: 4,
-                }
-            ]
-        }
-    ]
+export async function load({ parent }) {
     return {
-        data: response,
         exercises: [
             {
                 "title": "Barbell Bench Press",
@@ -215,6 +171,6 @@ export async function load() {
                 "reps": 10,
                 "sets": 3
             }
-        ]
+        ] as Exercice[]
     }
 }

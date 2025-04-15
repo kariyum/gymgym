@@ -68,9 +68,11 @@
 		flex-direction: row nowrap;
 		align-items: safe center;
 		max-width: var(--max-width);
+		background-color: var(--navbar-color);
 		height: max-content;
 		margin: auto;
 		border-radius: 7px;
+		padding: 0.5rem 1rem 0.5rem 1rem;
 	}
 
 	ul {
