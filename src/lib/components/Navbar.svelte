@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { goto, invalidate, invalidateAll } from '$app/navigation';
-	import { onMount } from 'svelte';
 	import ThemeToggler from './ThemeToggler.svelte';
 </script>
 

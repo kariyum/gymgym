@@ -1,10 +1,12 @@
 <script lang="ts">
+	import { base } from "$app/paths";
+
 
 </script>
 
 <ul>
-    <li><a href="/">Programs</a></li>
-    <li><a href="/">Stats</a></li>
+    <li><a href={base}>Programs</a></li>
+    <li><a href={base}>Stats</a></li>
 </ul>
 
 <style>

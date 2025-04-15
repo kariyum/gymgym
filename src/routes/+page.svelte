@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { base } from '$app/paths';
 
 	let { data } = $props();
 </script>
@@ -9,7 +10,7 @@
 	<p>You have no programs saved yet!</p>
 </div>
 
-<button class="add-program-btn" onclick={async () => await goto("/program/new")}>Add program</button>
+<button class="add-program-btn" onclick={async () => await goto(base + "/program/new")}>Add program</button>
 
 {#each data.data as work}
 	<div>

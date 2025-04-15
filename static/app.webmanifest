@@ -1,11 +1,11 @@
 {
     "name": "Gymmy",
     "short_name": "Gymmy",
-    "start_url": "/",
+    "start_url": "/gymgym",
     "display": "standalone",
     "id": "gymmy!",
     "description": "Track your gym progress analytically!",
-    "scope": "/",
+    "scope": "/gymgym",
     "icons": [
         {
             "src": "icons/512.png",
