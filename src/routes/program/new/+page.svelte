@@ -18,13 +18,44 @@
 	});
 
 	let exercices: ExtendedExercice[] = $derived(availableExercices);
+	let selectedExercices: Exercice[] = $derived(
+		exercices.filter((exercice) => exercice.selected).map((exercice) => exercice.exercice)
+	);
+	let remainingExercices: Exercice[] = $derived(
+		exercices.filter((exercice) => !exercice.selected).map((exercice) => exercice.exercice)
+	);
 
-	function toggleExercice(index: number) {
-		if (index <= exercices.length) {
-			exercices[index].selected = !exercices[index].selected;
+	function toggleExercice(title: string) {
+		let exercice = exercices.find((exercice) => exercice.exercice.title == title);
+		if (exercice) {
+			exercice.selected = !exercice.selected;
 		}
 	}
+	let dialog: HTMLDialogElement;
 </script>
+
+<dialog bind:this={dialog}>
+	<form method="dialog">
+		<div class="container">
+			<div aria-label="reps">
+				<div>
+					<div class="value">4</div>
+					<div>Sets</div>
+				</div>
+			</div>
+			<div aria-label="sets">
+				<div>
+					<div class="value">12</div>
+					<div>Reps</div>
+				</div>
+			</div>
+		</div>
+		<div class="actions">
+			<button>Cancel</button>
+			<input type="submit" value="OK" />
+		</div>
+	</form>
+</dialog>
 
 <section>
 	<form action="">
@@ -34,39 +65,37 @@
 		</div>
 		<div class="choice">
 			<div class="exercices-section">
-				<label for="exercice">Selected Exercices</label>
+				<h2>Selected Exercices</h2>
 				<div class="exercices">
-					{#each exercices as exercice, i}
-						{#if exercice.selected}
-							{@const ex = exercice.exercice}
-							<button class="exercice" onclick={() => toggleExercice(i)}>
+					{#if selectedExercices.length != 0}
+						{#each selectedExercices as ex}
+							<button class="exercice" onclick={() => toggleExercice(ex.title)}>
 								<div class="name">{ex.title}</div>
-								<div class="detail">
-									<div>{ex.sets}</div>
-									<div class="x"><X size="14" /></div>
-									<div>{ex.reps}</div>
-								</div>
 							</button>
-						{/if}
-					{/each}
+						{/each}
+					{:else}
+						<div>No exercices were selected</div>
+					{/if}
 				</div>
 			</div>
 			<div class="exercices-section">
-				<label for="exercice">All Exercices</label>
+				<h2>All Exercices</h2>
 				<div class="exercices">
-					{#each exercices as exercice, i}
-						{#if !exercice.selected}
-							{@const ex = exercice.exercice}
-							<button class="exercice" onclick={() => toggleExercice(i)}>
+					{#if remainingExercices.length != 0}
+						{#each remainingExercices as ex}
+							<button
+								class="exercice"
+								onclick={() => {
+									dialog.show();
+									// toggleExercice(ex.title);
+								}}
+							>
 								<div class="name">{ex.title}</div>
-								<div class="detail">
-									<div>{ex.sets}</div>
-									<div class="x"><X size="14" /></div>
-									<div>{ex.reps}</div>
-								</div>
 							</button>
-						{/if}
-					{/each}
+						{/each}
+					{:else}
+						<div>No more remaining exercices</div>
+					{/if}
 				</div>
 			</div>
 		</div>
@@ -78,26 +107,28 @@
 		display: flex;
 		flex-direction: column;
 		overflow-y: auto;
-		gap: 1rem;
 	}
 	.exercices-section {
-		label {
-			padding: 1rem;
-			margin-bottom: 1rem;
+		h2 {
+			margin: 1rem;
 		}
+
 		.exercices {
 			display: flex;
 			flex-direction: column;
 			gap: 0.5rem;
+			margin: 1rem;
 
 			.exercice {
+				border-radius: 5px;
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
 				border: none;
 
 				.name {
-					padding: 0.5rem 1rem 0.5rem 1rem;
+					padding: 1rem;
+					font-size: medium;
 				}
 
 				.detail {
@@ -109,6 +140,7 @@
 					gap: 0.5rem;
 					background-color: var(--orange);
 					line-height: 1rem;
+
 					.x {
 						line-height: 0;
 					}
@@ -142,6 +174,66 @@
 				outline: none;
 				outline: 2px solid var(--blue);
 			}
+		}
+	}
+
+	dialog {
+		width: 100%;
+		height: 100%;
+		margin: auto;
+		position: absolute;
+		top: 0;
+		left: 0;
+		border: none;
+
+		form {
+			height: 100%;
+
+			.container {
+				display: flex;
+				height: 100%;
+			}
+
+			div[aria-label='sets'],
+			div[aria-label='reps'] {
+				flex: 1;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 100%;
+
+				.value {
+					font-size: xx-large;
+					font-weight: 500;
+				}
+			}
+
+			div[aria-label='sets'] {
+				background-color: var(--blue);
+			}
+
+			div[aria-label='reps'] {
+				background-color: var(--orange);
+			}
+
+			.actions {
+				position: absolute;
+				bottom: 1rem;
+				left: 50%;
+				transform: translateX(-50%);
+
+				button,
+				input {
+					padding: 0.5rem 1rem;
+					width: 5rem;
+					border: 0;
+				}
+			}
+		}
+
+		&::backdrop {
+			margin: 0;
+			padding: 0;
 		}
 	}
 </style>

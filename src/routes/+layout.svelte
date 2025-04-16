@@ -14,6 +14,10 @@
 	</script>
 </svelte:head>
 
+<dialog>
+	
+</dialog>
+
 <div class="page-container" style:--client-height={1200}>
 	<header class="top-bar"><Navbar /></header>
 	<main class="children">{@render children()}</main>
