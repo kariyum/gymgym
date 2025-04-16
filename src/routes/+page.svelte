@@ -5,27 +5,31 @@
 	let { data } = $props();
 </script>
 
-<div style="padding:0.5rem 0 0.5rem 0;">
-	<h3>Saved programs</h3>
-	<p>You have no programs saved yet!</p>
-</div>
-
-<button class="add-program-btn" onclick={async () => await goto(base + "/program/new")}>Add program</button>
-
-{#each data.data as work}
+<div class="page">
 	<div>
-		<div>
-			{#each work.exercices as exercice}
-				<div>
-					<h3>{exercice.title}</h3>
-					<p>
-						{exercice.sets} sets x {exercice.reps} reps
-					</p>
-				</div>
-			{/each}
-		</div>
+		<h3>Saved programs</h3>
+		<p>You have no programs saved yet!</p>
 	</div>
-{/each}
+
+	<button class="add-program-btn" onclick={async () => await goto(base + '/program/new')}
+		>Add program</button
+	>
+
+	{#each data.data as work}
+		<div>
+			<div>
+				{#each work.exercices as exercice}
+					<div>
+						<h3>{exercice.title}</h3>
+						<p>
+							{exercice.sets} sets x {exercice.reps} reps
+						</p>
+					</div>
+				{/each}
+			</div>
+		</div>
+	{/each}
+</div>
 
 <style>
 	.days-container {
@@ -51,5 +55,9 @@
 		padding: 0.5rem;
 		border: 2px solid var(--border);
 		margin: 0.5rem 0 0.5rem 0;
+	}
+
+	.page {
+		margin: 1rem;
 	}
 </style>

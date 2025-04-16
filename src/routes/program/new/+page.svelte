@@ -1,11 +1,29 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import type { Exercice } from '../../+page';
 	import { X } from 'lucide-svelte';
-	import { page } from '$app/state';
 	let { data } = $props();
-	let exercices: Exercice[] = $state(data.exercises);
-	let selectedExercices: Exercice[] = $state([]);
+	interface ExtendedExercice {
+		exercice: Exercice;
+		selected: boolean;
+	}
+	let availableExercices: ExtendedExercice[] = $derived.by(() => {
+		const arr = data.exercises.map((exercice) => {
+			let element = $state({
+				exercice: exercice,
+				selected: false
+			});
+			return element;
+		});
+		return arr;
+	});
+
+	let exercices: ExtendedExercice[] = $derived(availableExercices);
+
+	function toggleExercice(index: number) {
+		if (index <= exercices.length) {
+			exercices[index].selected = !exercices[index].selected;
+		}
+	}
 </script>
 
 <section>
@@ -18,15 +36,18 @@
 			<div class="exercices-section">
 				<label for="exercice">Selected Exercices</label>
 				<div class="exercices">
-					{#each selectedExercices as exercice, i}
-						<button class="exercice">
-							<div class="name">{exercice.title}</div>
-							<div class="detail">
-								<div>{exercice.sets}</div>
-								<div class="x"><X size="14" /></div>
-								<div>{exercice.reps}</div>
-							</div>
-						</button>
+					{#each exercices as exercice, i}
+						{#if exercice.selected}
+							{@const ex = exercice.exercice}
+							<button class="exercice" onclick={() => toggleExercice(i)}>
+								<div class="name">{ex.title}</div>
+								<div class="detail">
+									<div>{ex.sets}</div>
+									<div class="x"><X size="14" /></div>
+									<div>{ex.reps}</div>
+								</div>
+							</button>
+						{/if}
 					{/each}
 				</div>
 			</div>
@@ -34,14 +55,17 @@
 				<label for="exercice">All Exercices</label>
 				<div class="exercices">
 					{#each exercices as exercice, i}
-						<div class="exercice">
-							<div class="name">{exercice.title}</div>
-							<div class="detail">
-								<div>{exercice.sets}</div>
-								<div class="x"><X size="14" /></div>
-								<div>{exercice.reps}</div>
-							</div>
-						</div>
+						{#if !exercice.selected}
+							{@const ex = exercice.exercice}
+							<button class="exercice" onclick={() => toggleExercice(i)}>
+								<div class="name">{ex.title}</div>
+								<div class="detail">
+									<div>{ex.sets}</div>
+									<div class="x"><X size="14" /></div>
+									<div>{ex.reps}</div>
+								</div>
+							</button>
+						{/if}
 					{/each}
 				</div>
 			</div>
@@ -51,12 +75,15 @@
 
 <style>
 	.choice {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
+		display: flex;
+		flex-direction: column;
+		overflow-y: auto;
+		gap: 1rem;
 	}
 	.exercices-section {
 		label {
-			margin: 1rem;
+			padding: 1rem;
+			margin-bottom: 1rem;
 		}
 		.exercices {
 			display: flex;
@@ -67,6 +94,7 @@
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
+				border: none;
 
 				.name {
 					padding: 0.5rem 1rem 0.5rem 1rem;
