@@ -43,6 +43,7 @@
 		offsetY = 0;
 	}}
 	ontouchmove={(event) => {
+        event.preventDefault();
 		if (dragging) {
 			currentPosition = event.touches[0].clientY;
 			if (Math.abs(offsetY) >= triggerOffset) {
