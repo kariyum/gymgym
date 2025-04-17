@@ -1,15 +1,14 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-    interface Props {
-        options: string[]
-    }
+	interface Props {
+		options: string[] | number[];
+	}
 	let { options }: Props = $props();
 	let selectedIndex = $state(1);
 	let dragging = $state(false);
 	let startPosition = $state(0);
 	let currentPosition = $state(0);
 	let offsetY = $derived(currentPosition - startPosition);
-
 	let offsetYcss = $derived(offsetY.toString() + 'px');
 
 	function selectNext() {
@@ -79,10 +78,6 @@
 
 <style>
 	.container {
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
 		overflow: hidden;
 
 		.sets-container {

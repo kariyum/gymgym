@@ -1,4 +1,5 @@
 <script lang="ts">
+	import OptionsWheel from '$lib/components/OptionsWheel.svelte';
 	import type { Exercice } from '../../+page';
 	import { X } from 'lucide-svelte';
 	let { data } = $props();
@@ -39,13 +40,15 @@
 		<div class="container">
 			<div aria-label="reps">
 				<div>
-					<div class="value">4</div>
+					<div class="value">
+						<OptionsWheel options={[1, 2, 3, 4]}></OptionsWheel>
+					</div>
 					<div>Sets</div>
 				</div>
 			</div>
 			<div aria-label="sets">
 				<div>
-					<div class="value">12</div>
+					<div class="value"><OptionsWheel options={[1, 2, 3, 4]}></OptionsWheel></div>
 					<div>Reps</div>
 				</div>
 			</div>
@@ -179,7 +182,7 @@
 
 	dialog {
 		position: absolute;
-		width: 12rem;
+		width: 20rem;
 		aspect-ratio: 3/2;
 		top: 50%;
 		left: 50%;
