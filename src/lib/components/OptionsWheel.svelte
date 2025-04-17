@@ -43,7 +43,6 @@
 		offsetY = 0;
 	}}
 	ontouchmove={(event) => {
-        event.preventDefault();
 		if (dragging) {
 			currentPosition = event.touches[0].clientY;
 			if (Math.abs(offsetY) >= triggerOffset) {
@@ -106,6 +105,7 @@
 		overflow: hidden;
 
 		.sets-container {
+			touch-action: none;
 			display: grid;
 			grid-template-rows: 1fr 1fr 1fr;
 			gap: 1.4rem;
