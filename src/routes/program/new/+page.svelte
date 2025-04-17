@@ -178,52 +178,55 @@
 	}
 
 	dialog {
-		width: 100%;
-		height: 100%;
-		margin: auto;
 		position: absolute;
-		top: 0;
-		left: 0;
-		border: none;
+		width: 12rem;
+		aspect-ratio: 3/2;
+		top: 50%;
+		left: 50%;
+		border: 2px solid var(--border);
+		overflow: hidden;
+		border-radius: 10px;
+		transform: translate(-50%, -50%);
 
 		form {
 			height: 100%;
+			display: flex;
+			flex-direction: column;
 
 			.container {
 				display: flex;
-				height: 100%;
-			}
-
-			div[aria-label='sets'],
-			div[aria-label='reps'] {
 				flex: 1;
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				height: 100%;
 
-				.value {
-					font-size: xx-large;
-					font-weight: 500;
+				div[aria-label='sets'],
+				div[aria-label='reps'] {
+					flex: 1;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					height: 100%;
+
+					.value {
+						font-size: xx-large;
+						font-weight: 500;
+					}
+				}
+
+				div[aria-label='sets'] {
+					background-color: var(--blue);
+				}
+
+				div[aria-label='reps'] {
+					background-color: var(--orange);
 				}
 			}
 
-			div[aria-label='sets'] {
-				background-color: var(--blue);
-			}
-
-			div[aria-label='reps'] {
-				background-color: var(--orange);
-			}
-
 			.actions {
-				position: absolute;
-				bottom: 1rem;
-				left: 50%;
-				transform: translateX(-50%);
-
+				display: flex;
+				background-color: var(--background-color);
 				button,
 				input {
+					cursor: pointer;
+					flex: 1;
 					padding: 0.5rem 1rem;
 					width: 5rem;
 					border: 0;
