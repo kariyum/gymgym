@@ -25,10 +25,11 @@
 	let singleElementHeight: number;
 	let triggerOffset: number;
 
-	onMount(() => {
+	$effect(() => {
 		gap = parseInt(getComputedStyle(container).gap.slice(0, 2));
-		singleElementHeight = parseInt(getComputedStyle(singleElement).height);
+		singleElementHeight = singleElement.offsetHeight;
 		triggerOffset = Math.round(singleElementHeight + gap / 2);
+		console.log('Trigger offset is ', triggerOffset);
 	});
 </script>
 
@@ -59,7 +60,7 @@
 		bind:this={container}
 		class="sets-container"
 		style:--offsetY={offsetYcss}
-		style:transition={dragging ? 'none' : 'all 0.2s ease-in-out'}
+		style:transition={dragging ? 'none' : 'transform 0.2s ease-in-out'}
 		onmousedown={(event) => {
 			dragging = true;
 			currentPosition = event.clientY;
@@ -83,9 +84,9 @@
 		.sets-container {
 			display: grid;
 			grid-template-rows: 1fr 1fr 1fr;
-			gap: 1rem;
-			padding: 0.2rem;
-			font-size: xx-large;
+			gap: 1.4rem;
+			font-size: 3rem;
+
 			transform: translateY(var(--offsetY));
 
 			& > :first-child {

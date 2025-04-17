@@ -33,31 +33,44 @@
 		}
 	}
 	let dialog: HTMLDialogElement;
+	let dialogOpen: boolean = $state(false);
+	let popupExercice: Exercice | undefined = $state();
 </script>
 
-<dialog bind:this={dialog}>
-	<form method="dialog">
-		<div class="container">
-			<div aria-label="reps">
-				<div>
-					<div class="value">
-						<OptionsWheel options={[1, 2, 3, 4]}></OptionsWheel>
+<dialog
+	bind:this={dialog}
+	onclose={() => {
+		if (dialog.returnValue === "OK" && popupExercice) {
+			toggleExercice(popupExercice.title);
+		}
+		popupExercice = undefined;
+		dialogOpen = false;
+	}}
+>
+	{#if dialogOpen}
+		<form method="dialog">
+			<div class="container">
+				<div aria-label="reps">
+					<div class="value-container">
+						<div class="value">
+							<OptionsWheel options={[1, 2, 3, 4]}></OptionsWheel>
+						</div>
+						<div>Sets</div>
 					</div>
-					<div>Sets</div>
+				</div>
+				<div aria-label="sets">
+					<div class="value-container">
+						<div class="value"><OptionsWheel options={Array(15).keys().map((x) => x +1).toArray()}></OptionsWheel></div>
+						<div>Reps</div>
+					</div>
 				</div>
 			</div>
-			<div aria-label="sets">
-				<div>
-					<div class="value"><OptionsWheel options={[1, 2, 3, 4]}></OptionsWheel></div>
-					<div>Reps</div>
-				</div>
+			<div class="actions">
+				<button onclick={() => dialog.close("NOT OK")}>Cancel</button>
+				<input type="submit" value="OK" />
 			</div>
-		</div>
-		<div class="actions">
-			<button>Cancel</button>
-			<input type="submit" value="OK" />
-		</div>
-	</form>
+		</form>
+	{/if}
 </dialog>
 
 <section>
@@ -89,8 +102,9 @@
 							<button
 								class="exercice"
 								onclick={() => {
-									dialog.show();
-									// toggleExercice(ex.title);
+									popupExercice = ex;
+									dialog.showModal();
+									dialogOpen = true;
 								}}
 							>
 								<div class="name">{ex.title}</div>
@@ -183,7 +197,6 @@
 	dialog {
 		position: absolute;
 		width: 20rem;
-		aspect-ratio: 3/2;
 		top: 50%;
 		left: 50%;
 		border: 2px solid var(--border);
@@ -208,9 +221,16 @@
 					align-items: center;
 					height: 100%;
 
-					.value {
-						font-size: xx-large;
-						font-weight: 500;
+					.value-container {
+						display: flex;
+						flex-direction: row nowrap;
+						justify-content: center;
+						align-items: center;
+						gap: 1.5rem;
+						.value {
+							font-size: xx-large;
+							font-weight: 500;
+						}
 					}
 				}
 
@@ -240,6 +260,7 @@
 		&::backdrop {
 			margin: 0;
 			padding: 0;
+			background-color: rgba(0, 0, 0, 0.1);
 		}
 	}
 </style>
