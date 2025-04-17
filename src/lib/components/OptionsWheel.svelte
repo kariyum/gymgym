@@ -38,6 +38,24 @@
 		dragging = false;
 		offsetY = 0;
 	}}
+	ontouchend={(event) => {
+		dragging = false;
+		offsetY = 0;
+	}}
+	ontouchmove={(event) => {
+		if (dragging) {
+			currentPosition = event.touches[0].clientY;
+			if (Math.abs(offsetY) >= triggerOffset) {
+				if (offsetY > 0) {
+					selectNext();
+					startPosition = currentPosition + gap / 2;
+				} else {
+					selectPrevious();
+					startPosition = currentPosition - gap / 2;
+				}
+			}
+		}
+	}}
 	onmousemove={(event) => {
 		if (dragging) {
 			currentPosition = event.clientY;
@@ -65,6 +83,11 @@
 			dragging = true;
 			currentPosition = event.clientY;
 			startPosition = event.clientY;
+		}}
+		ontouchstart={(event) => {
+			dragging = true;
+			currentPosition = event.touches[0].clientY;
+			startPosition = event.touches[0].clientY;
 		}}
 	>
 		<button onclick={() => selectNext()}>
