@@ -1,7 +1,7 @@
 <script lang="ts">
 	import OptionsWheel from '$lib/components/OptionsWheel.svelte';
 	import type { Exercice } from '../../+page';
-	import { X } from 'lucide-svelte';
+	import { Minus, X } from 'lucide-svelte';
 	let { data } = $props();
 	interface ExtendedExercice {
 		exercice: Exercice;
@@ -26,26 +26,55 @@
 		exercices.filter((exercice) => !exercice.selected).map((exercice) => exercice.exercice)
 	);
 
-	function toggleExercice(title: string) {
+	function deselectExercice(title: string) {
 		let exercice = exercices.find((exercice) => exercice.exercice.title == title);
 		if (exercice) {
-			exercice.selected = !exercice.selected;
+			exercice.selected = false;
 		}
 	}
+
+	function selectExercice(title: string) {
+		let exercice = exercices.find((exercice) => exercice.exercice.title == title);
+		if (exercice) {
+			exercice.selected = true;
+			updateExercice(exercice.exercice);
+		}
+	}
+
+	function updateExercice(exercice: Exercice) {
+		exercice.sets = setOptions[setsValueIndex];
+		exercice.reps = repOptions[repsValueIndex];
+	}
+
+	function openExerciceModal(ex: Exercice) {
+		popupExercice = ex;
+		dialog.showModal();
+		dialogOpen = true;
+	}
+
 	let dialog: HTMLDialogElement;
 	let dialogOpen: boolean = $state(false);
 	let popupExercice: Exercice | undefined = $state();
-	let sets: number = $state(0);
-	let reps: number = $state(0);
+	let setsValueIndex: number = $state(0);
+	let repsValueIndex: number = $state(0);
+	const repOptions = Array(15)
+		.fill(0)
+		.map((_, i) => i + 1)
+		.map((x) => x.toString())
+		.concat(['+Inf']);
+	const setOptions = Array(4)
+		.fill(0)
+		.map((_, i) => i + 1)
+		.map((x) => x.toString());
 </script>
 
 <dialog
 	bind:this={dialog}
 	onclose={() => {
 		if (dialog.returnValue === 'OK' && popupExercice) {
-			console.debug('Sets = ', sets);
-			console.debug('Reps = ', reps);
-			toggleExercice(popupExercice.title);
+			console.debug('Sets = ', setsValueIndex);
+			console.debug('Reps = ', repsValueIndex);
+			selectExercice(popupExercice.title);
 		}
 		popupExercice = undefined;
 		dialogOpen = false;
@@ -58,20 +87,13 @@
 			<div class="container">
 				<div aria-label="sets">
 					<div class="value-container">
-						<OptionsWheel
-							options={Array(15)
-								.fill(0)
-								.map((_, i) => i + 1)
-								.map((x) => x.toString())
-								.concat(['+Inf'])}
-							bind:selectedIndex={reps}
-						></OptionsWheel>
+						<OptionsWheel options={repOptions} bind:selectedIndex={repsValueIndex}></OptionsWheel>
 					</div>
 				</div>
 				<X size="48" />
 				<div aria-label="reps">
 					<div class="value-container">
-						<OptionsWheel options={[1, 2, 3, 4]} bind:selectedIndex={sets}></OptionsWheel>
+						<OptionsWheel options={setOptions} bind:selectedIndex={setsValueIndex}></OptionsWheel>
 					</div>
 				</div>
 			</div>
@@ -99,9 +121,26 @@
 				<div class="exercices">
 					{#if selectedExercices.length != 0}
 						{#each selectedExercices as ex}
-							<button class="exercice" onclick={() => toggleExercice(ex.title)}>
-								<div class="name">{ex.title}</div>
-							</button>
+							<div class="selected-exercice">
+								<div class="exercice">
+									<div class="name">{ex.title}</div>
+								</div>
+								<div style="display: flex; gap:1rem;">
+									<button
+										class="ex-info"
+										onclick={() => {
+											openExerciceModal(ex);
+										}}
+									>
+										<div>{ex.reps.toString().padStart(2, '0')}</div>
+										<X size="14" />
+										<div>{ex.sets.toString().padStart(2, '0')}</div>
+									</button>
+									<button class="action" onclick={() => deselectExercice(ex.title)}>
+										<Minus />
+									</button>
+								</div>
+							</div>
 						{/each}
 					{:else}
 						<div>No exercices were selected</div>
@@ -116,9 +155,7 @@
 							<button
 								class="exercice"
 								onclick={() => {
-									popupExercice = ex;
-									dialog.showModal();
-									dialogOpen = true;
+									openExerciceModal(ex);
 								}}
 							>
 								<div class="name">{ex.title}</div>
@@ -150,12 +187,30 @@
 			gap: 0.5rem;
 			margin: 1rem;
 
+			.selected-exercice {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				background-color: var(--btn-bg);
+				border-radius: 5px;
+
+				.action {
+					padding: 0.2rem;
+					margin-right: 0.5rem;
+					border: 2px solid var(--border);
+					line-height: 0;
+					border-radius: 5px;
+				}
+			}
+
 			.exercice {
 				border-radius: 5px;
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
 				border: none;
+				background-color: var(--btn-bg);
+				color: canvastext;
 
 				.name {
 					padding: 1rem;
@@ -286,6 +341,20 @@
 			background-color: rgba(0, 0, 0, 0.6);
 			-webkit-backdrop-filter: blur(5px);
 			backdrop-filter: blur(2px);
+		}
+	}
+
+	.ex-info {
+		display: flex;
+		font-weight: bold;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.5rem;
+		border-radius: 5px;
+		border: none;
+		> * {
+			font-size: 1.3rem;
+			font-family: monospace;
 		}
 	}
 </style>

@@ -7,8 +7,8 @@ export interface WorkoutProgram {
 export interface Exercice {
     title: string,
     muscle_groups: string[],
-    reps: number,
-    sets: number,
+    reps: string, // can be inf
+    sets: string, // can be inf
     average_weight?: number,
     weight_per_set?: WeightPerSet[],
 }
@@ -20,26 +20,26 @@ export interface WeightPerSet {
 
 export async function load() {
     const response: WorkoutProgram[] = [
-        {  
+        {
             day: new Date(),
             exercices: [
                 {
                     title: "Bench Press",
                     muscle_groups: [],
-                    reps: 12,
-                    sets: 4,
+                    reps: "12",
+                    sets: "4",
                 },
                 {
                     title: "Incline Bench Press",
                     muscle_groups: [],
-                    reps: 12,
-                    sets: 4,
+                    reps: "12",
+                    sets: "4",
                 },
                 {
                     title: "Biceps",
                     muscle_groups: [],
-                    reps: 12,
-                    sets: 4,
+                    reps: "12",
+                    sets: "4",
                 }
             ]
         }
