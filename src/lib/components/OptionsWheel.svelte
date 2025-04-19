@@ -132,6 +132,7 @@
 				min-width: 2ch;
 				position: relative;
 				right: 0;
+				text-align: center;
 				font-family: monospace;
 			}
 

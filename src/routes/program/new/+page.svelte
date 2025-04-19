@@ -35,8 +35,8 @@
 	let dialog: HTMLDialogElement;
 	let dialogOpen: boolean = $state(false);
 	let popupExercice: Exercice | undefined = $state();
-	let sets: number= $state(0);
-	let reps: number= $state(0);
+	let sets: number = $state(0);
+	let reps: number = $state(0);
 </script>
 
 <dialog
@@ -59,7 +59,11 @@
 				<div aria-label="sets">
 					<div class="value-container">
 						<OptionsWheel
-							options={Array(15).fill(0).map((_, i) => i + 1)}
+							options={Array(15)
+								.fill(0)
+								.map((_, i) => i + 1)
+								.map((x) => x.toString())
+								.concat(['+Inf'])}
 							bind:selectedIndex={reps}
 						></OptionsWheel>
 					</div>
