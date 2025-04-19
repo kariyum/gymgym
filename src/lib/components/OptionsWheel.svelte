@@ -28,7 +28,7 @@
 	$effect(() => {
 		gap = parseInt(getComputedStyle(container).gap.slice(0, 2));
 		singleElementHeight = singleElement.offsetHeight;
-		triggerOffset = Math.round(singleElementHeight + gap / 2);
+		triggerOffset = Math.round(singleElementHeight / 2 + gap / 2);
 		console.log('Trigger offset is ', triggerOffset);
 	});
 </script>
@@ -48,10 +48,10 @@
 			if (Math.abs(offsetY) >= triggerOffset) {
 				if (offsetY > 0) {
 					selectNext();
-					startPosition = currentPosition + gap / 2;
+					startPosition = currentPosition + triggerOffset + gap / 2;
 				} else {
 					selectPrevious();
-					startPosition = currentPosition - gap / 2;
+					startPosition = currentPosition - triggerOffset - gap / 2;
 				}
 			}
 		}
@@ -62,10 +62,10 @@
 			if (Math.abs(offsetY) >= triggerOffset) {
 				if (offsetY > 0) {
 					selectNext();
-					startPosition = currentPosition + gap / 2;
+					startPosition = currentPosition + triggerOffset + gap / 2;
 				} else {
 					selectPrevious();
-					startPosition = currentPosition - gap / 2;
+					startPosition = currentPosition - triggerOffset - gap / 2;
 				}
 			}
 		}
@@ -90,13 +90,13 @@
 			startPosition = event.touches[0].clientY;
 		}}
 	>
-		<button onclick={() => selectNext()}>
+		<div>
 			{options[selectedIndex + 1] ?? ''}
-		</button>
+		</div>
 		<div bind:this={singleElement}>{options.at(selectedIndex)}</div>
-		<button onclick={() => selectPrevious()}>
+		<div>
 			{options[selectedIndex - 1] ?? ''}
-		</button>
+		</div>
 	</div>
 </div>
 
@@ -108,7 +108,7 @@
 			touch-action: none;
 			display: grid;
 			grid-template-rows: 1fr 1fr 1fr;
-			gap: 1.4rem;
+			gap: 0.1rem;
 			font-size: 3rem;
 
 			transform: translateY(var(--offsetY));
@@ -130,6 +130,10 @@
 
 			button:empty {
 				visibility: hidden;
+			}
+
+			> * {
+				transition: color 1s ease;
 			}
 		}
 	}

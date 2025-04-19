@@ -235,11 +235,11 @@
 				}
 
 				div[aria-label='sets'] {
-					background-color: var(--blue);
+					background-color: canvas;
 				}
 
 				div[aria-label='reps'] {
-					background-color: var(--orange);
+					background-color: canvas;
 				}
 			}
 
