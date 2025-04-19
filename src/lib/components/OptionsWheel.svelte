@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	interface Props {
 		options: string[] | number[];
 	}
@@ -11,12 +10,18 @@
 	let offsetY = $derived(currentPosition - startPosition);
 	let offsetYcss = $derived(offsetY.toString() + 'px');
 
-	function selectNext() {
+	async function selectNext() {
+		singleElement.classList.remove('flash');
+		void singleElement.offsetWidth; // Force reflow
 		selectedIndex = Math.min(selectedIndex + 1, options.length - 1);
+		singleElement.classList.add('flash');
 	}
 
-	function selectPrevious() {
+	async function selectPrevious() {
+		singleElement.classList.remove('flash');
+		void singleElement.offsetWidth; // Force reflow
 		selectedIndex = Math.max(selectedIndex - 1, 0);
+		singleElement.classList.add('flash');
 	}
 
 	let container: HTMLDivElement;
@@ -131,10 +136,19 @@
 			button:empty {
 				visibility: hidden;
 			}
+		}
+	}
 
-			> * {
-				transition: color 1s ease;
-			}
+	:global(.flash) {
+		animation: greyFlash 0.5s ease;
+	}
+
+	@keyframes greyFlash {
+		from {
+			color: var(--border);
+		}
+		to {
+			color: white;
 		}
 	}
 </style>
