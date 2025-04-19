@@ -35,38 +35,48 @@
 	let dialog: HTMLDialogElement;
 	let dialogOpen: boolean = $state(false);
 	let popupExercice: Exercice | undefined = $state();
+	let sets: number= $state(0);
+	let reps: number= $state(0);
 </script>
 
 <dialog
 	bind:this={dialog}
 	onclose={() => {
-		if (dialog.returnValue === "OK" && popupExercice) {
+		if (dialog.returnValue === 'OK' && popupExercice) {
+			console.debug('Sets = ', sets);
+			console.debug('Reps = ', reps);
 			toggleExercice(popupExercice.title);
 		}
 		popupExercice = undefined;
 		dialogOpen = false;
 	}}
 >
+	<!-- Needed because OptionsWheel needs to determine the height
+	  of an element when it's mounted to the DOM and not displayed.. -->
 	{#if dialogOpen}
 		<form method="dialog">
 			<div class="container">
-				<div aria-label="reps">
-					<div class="value-container">
-						<div class="value">
-							<OptionsWheel options={[1, 2, 3, 4]}></OptionsWheel>
-						</div>
-						<div>Sets</div>
-					</div>
-				</div>
 				<div aria-label="sets">
 					<div class="value-container">
-						<div class="value"><OptionsWheel options={Array(15).keys().map((x) => x +1).toArray()}></OptionsWheel></div>
-						<div>Reps</div>
+						<OptionsWheel
+							options={Array(15).fill(0).map((_, i) => i + 1)}
+							bind:selectedIndex={reps}
+						></OptionsWheel>
+					</div>
+				</div>
+				<X size="48" />
+				<div aria-label="reps">
+					<div class="value-container">
+						<OptionsWheel options={[1, 2, 3, 4]} bind:selectedIndex={sets}></OptionsWheel>
 					</div>
 				</div>
 			</div>
+			<div class="description">
+				<div>Reps</div>
+				<div>Sets</div>
+			</div>
 			<div class="actions">
-				<button onclick={() => dialog.close("NOT OK")}>Cancel</button>
+				<button onclick={() => dialog.close('NOT OK')}>Cancel</button>
 				<input type="submit" value="OK" />
 			</div>
 		</form>
@@ -196,7 +206,7 @@
 
 	dialog {
 		position: absolute;
-		width: 20rem;
+		width: 15rem;
 		top: 50%;
 		left: 50%;
 		border: 2px solid var(--border);
@@ -212,13 +222,13 @@
 			.container {
 				display: flex;
 				flex: 1;
+				align-items: center;
 
 				div[aria-label='sets'],
 				div[aria-label='reps'] {
-					flex: 1;
-					display: flex;
-					justify-content: center;
-					align-items: center;
+					width: 100%;
+					justify-content: stretch;
+					align-items: stretch;
 					height: 100%;
 
 					.value-container {
@@ -227,10 +237,6 @@
 						justify-content: center;
 						align-items: center;
 						gap: 1.5rem;
-						.value {
-							font-size: xx-large;
-							font-weight: 500;
-						}
 					}
 				}
 
@@ -240,6 +246,19 @@
 
 				div[aria-label='reps'] {
 					background-color: canvas;
+				}
+			}
+
+			.description {
+				display: flex;
+				gap: 1.5rem;
+
+				> * {
+					flex: 1;
+					text-align: center;
+					font-family: monospace;
+					margin-bottom: 1rem;
+					font-size: large;
 				}
 			}
 
@@ -260,7 +279,9 @@
 		&::backdrop {
 			margin: 0;
 			padding: 0;
-			background-color: rgba(0, 0, 0, 0.1);
+			background-color: rgba(0, 0, 0, 0.6);
+			-webkit-backdrop-filter: blur(5px);
+			backdrop-filter: blur(2px);
 		}
 	}
 </style>
