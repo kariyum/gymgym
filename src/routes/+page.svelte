@@ -1,14 +1,26 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { base } from '$app/paths';
+	import { Database, userProgamsRepo } from '$lib/db.js';
+	import type { UserProgram } from '$lib/schema.js';
+	import { onMount } from 'svelte';
 
 	let { data } = $props();
+	let userPrograms: UserProgram[] = $derived(data.userPrograms);
+
 </script>
 
 <div class="page">
 	<div>
 		<h3>Saved programs</h3>
-		<p>You have no programs saved yet!</p>
+		{#if userPrograms.length == 0}
+			<p>You have no programs saved yet!</p>
+		{:else}
+			{#each userPrograms as up}
+				<div>{up.title}</div>
+				<div>{up.exercices.length}</div>
+			{/each}
+		{/if}
 	</div>
 
 	<button class="add-program-btn" onclick={async () => await goto(base + '/program/new')}

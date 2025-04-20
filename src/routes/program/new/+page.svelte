@@ -1,5 +1,7 @@
 <script lang="ts">
 	import OptionsWheel from '$lib/components/OptionsWheel.svelte';
+	import { Database, userProgamsRepo } from '$lib/db';
+	import type { UserProgram } from '$lib/schema';
 	import type { Exercice } from '../../+page';
 	import { Minus, X } from 'lucide-svelte';
 	let { data } = $props();
@@ -57,6 +59,8 @@
 	let popupExercice: Exercice | undefined = $state();
 	let setsValueIndex: number = $state(0);
 	let repsValueIndex: number = $state(0);
+	let title: string = $state('');
+
 	const repOptions = Array(15)
 		.fill(0)
 		.map((_, i) => i + 1)
@@ -66,6 +70,19 @@
 		.fill(0)
 		.map((_, i) => i + 1)
 		.map((x) => x.toString());
+
+	async function insertProgram() {
+		const userProgram: UserProgram = {
+			title: title,
+			exercices: selectedExercices
+		};
+		const db = (await Database.getInstance()).db;
+		if (db) {
+			userProgamsRepo.insertUserProgram(db, userProgram);
+		} else {
+			console.error('Failed to get db instance to insert user programs');
+		}
+	}
 </script>
 
 <dialog
@@ -121,10 +138,11 @@
 </dialog>
 
 <section>
-	<form action="">
+	<form action="" onsubmit={(event) => event.preventDefault()}>
+		<input type="submit" value="Save" class="form-submit" onclick={() => insertProgram()} />
 		<div class="title">
-			<label for="name">Program Title</label>
-			<input type="text" />
+			<label for="program_title">Program Title</label>
+			<input type="text" bind:value={title} />
 		</div>
 		<div class="choice">
 			<div class="exercices-section">
@@ -229,7 +247,6 @@
 					padding: 1rem;
 					font-size: medium;
 				}
-
 			}
 		}
 	}
@@ -249,7 +266,7 @@
 		flex-direction: column;
 		gap: 0.5rem;
 		margin-bottom: 0.5rem;
-		margin: 1rem;
+		margin: 0 1rem;
 
 		input {
 			padding: 0.5rem;
@@ -355,5 +372,13 @@
 			font-size: 1.3rem;
 			font-family: monospace;
 		}
+	}
+
+	.form-submit {
+		padding: 0.5rem 1rem;
+		display: block;
+		margin-top: 1rem;
+		margin-right: 1rem;
+		margin-left: auto;
 	}
 </style>

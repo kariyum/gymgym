@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
+	import { Database } from "$lib/db";
 
 	interface Props {
 		options: string[] | number[];
@@ -37,15 +38,19 @@
 	let gap: number;
 	let singleElementHeight: number;
 	let triggerOffset: number;
-
+	let database;
 	onMount(() => {
+		database = Database.getInstance();
 		gap = parseInt(getComputedStyle(container).gap.slice(0, 2));
 		singleElementHeight = singleElement.offsetHeight;
 		triggerOffset = Math.round(singleElementHeight / 2 + gap / 2);
 		console.debug('Trigger offset is ', triggerOffset);
 		console.debug('Gap is ', gap);
-		console.log('singleElementHeight = ', singleElementHeight);
+		console.debug('singleElementHeight = ', singleElementHeight);
 	});
+
+	function saveProgram() {
+	}
 </script>
 
 <svelte:document

@@ -1,7 +1,5 @@
 <script lang="ts">
 	import { base } from '$app/paths';
-
-	console.log(base);
 </script>
 
 <ul>

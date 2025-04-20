@@ -1,3 +1,4 @@
+import { Database, userProgamsRepo } from "$lib/db";
 
 export interface WorkoutProgram {
     day: Date,
@@ -44,7 +45,9 @@ export async function load() {
             ]
         }
     ]
+    const db = (await Database.getInstance()).db;
     return {
+        userPrograms: db ? await userProgamsRepo.getAllUserPrograms(db) : [],
         data: response,
         exercises: [
             {

@@ -4,7 +4,9 @@ const dev = process.argv.includes("dev");
 const config = {
 	preprocess: vitePreprocess(),
 	kit: {
-		adapter: adapter(),
+		adapter: adapter({
+			fallback: 'index.html'
+		}),
 		paths: {
 			base: dev ? "" : process.env.BASE_PATH,
 		},
