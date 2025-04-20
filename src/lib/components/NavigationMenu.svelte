@@ -3,8 +3,7 @@
 </script>
 
 <ul>
-	<li><a href={base + '/'}>Programs</a></li>
-	<li><a href={base + '/'}>Stats</a></li>
+	<li><a href={base + '/'}>Your Workouts</a></li>
 </ul>
 
 <style>
@@ -16,7 +15,10 @@
 		padding: 1rem;
 
 		li {
+			flex: 1;
 			list-style: none;
+			align-self: center;
+			text-align: center;
 			a {
 				text-decoration: none;
 				color: inherit;

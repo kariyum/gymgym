@@ -1,67 +1,57 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { base } from '$app/paths';
-	import { Database, userProgamsRepo } from '$lib/db.js';
 	import type { UserProgram } from '$lib/schema.js';
-	import { onMount } from 'svelte';
 
 	let { data } = $props();
 	let userPrograms: UserProgram[] = $derived(data.userPrograms);
-
 </script>
 
 <div class="page">
 	<div>
-		<h3>Saved programs</h3>
+		<h3>Saved Workouts</h3>
 		{#if userPrograms.length == 0}
 			<p>You have no programs saved yet!</p>
 		{:else}
-			{#each userPrograms as up}
-				<div>{up.title}</div>
-				<div>{up.exercices.length}</div>
+			{#each userPrograms as up, i}
+				<a href={base + '/program/' + up.title} class="exercice">
+					<h3>{up.title}</h3>
+					<div style="margin-left: 1rem;">
+						{#each up.exercices as ex}
+							<p>{ex.reps} x {ex.sets} {ex.title}</p>
+						{/each}
+					</div>
+				</a>
+				{#if i < userPrograms.length - 1}
+					<hr />
+				{/if}
 			{/each}
 		{/if}
 	</div>
 
 	<button class="add-program-btn" onclick={async () => await goto(base + '/program/new')}
-		>Add program</button
+		>Add workout</button
 	>
-
-	{#each data.data as work}
-		<div>
-			<div>
-				{#each work.exercices as exercice}
-					<div>
-						<h3>{exercice.title}</h3>
-						<p>
-							{exercice.sets} sets x {exercice.reps} reps
-						</p>
-					</div>
-				{/each}
-			</div>
-		</div>
-	{/each}
 </div>
 
 <style>
-	.days-container {
-		display: flex;
-		width: 100%;
-		overflow-x: scroll;
-		column-gap: 0.3rem;
-		row-gap: 0.5rem;
-
-		&::-webkit-scrollbar {
-			display: none;
+	hr {
+		border: 1px solid var(--border);
+		opacity: 0.3;
+		border-radius: 10px;
+	}
+	h3 {
+		margin-bottom: 0.5rem;
+	}
+	.exercice {
+		margin: 1rem 0rem;
+		display: block;
+		color: var(--font-color);
+		text-decoration: none;
+		p {
+			margin: 0.5rem 0;
 		}
 	}
-
-	.day-btn {
-		padding: 0.3rem;
-		border-radius: 5px;
-		border: 2px solid var(--border);
-	}
-
 	.add-program-btn {
 		width: 100%;
 		padding: 0.5rem;

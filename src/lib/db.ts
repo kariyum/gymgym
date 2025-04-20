@@ -1,3 +1,4 @@
+import { invalidateAll } from "$app/navigation";
 import type { UserProgram } from "./schema";
 
 export class Database {
@@ -87,7 +88,23 @@ export const userProgamsRepo = {
 
     insertUserProgram: (db: IDBDatabase, data: UserProgram) => {
         const transaction = db.transaction("user_programs", "readwrite");
-        console.log(JSON.parse(JSON.stringify(data)));
-        transaction.objectStore("user_programs").put(JSON.parse(JSON.stringify(data)));
+        const result = transaction.objectStore("user_programs").put(JSON.parse(JSON.stringify(data)));
+        result.onerror = (event) => {
+            console.log("Failed to insert user program...", event);
+        }
+        result.onsuccess = () => {
+            console.log("User program inserted");
+        }
+    },
+
+    deleteUserProgram: (db: IDBDatabase, title: string) => {
+        const transaction = db.transaction("user_programs", "readwrite");
+        const result = transaction.objectStore("user_programs").delete(title);
+        result.onerror = (event) => {
+            console.log("Failed to delete user program...", event);
+        }
+        result.onsuccess = () => {
+            console.log("User program deleted");
+        }
     }
 }
