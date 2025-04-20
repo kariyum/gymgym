@@ -117,7 +117,7 @@
 			position: relative;
 			justify-content: center;
 			transform: translateY(var(--offsetY));
-			top: -2.7rem;
+			top: -2rem;
 
 			& > :first-child {
 				color: var(--border);
@@ -133,8 +133,18 @@
 				position: relative;
 				right: 0;
 				text-align: center;
-				font-family: 'Roboto Mono', Consolas, 'Courier New', monospace;
+				font-family: monospace;
+			}
 
+			button {
+				background-color: transparent;
+				border: none;
+				font-size: inherit;
+				cursor: auto;
+			}
+
+			button:empty {
+				visibility: hidden;
 			}
 		}
 	}

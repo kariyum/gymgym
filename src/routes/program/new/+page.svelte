@@ -216,6 +216,21 @@
 					padding: 1rem;
 					font-size: medium;
 				}
+
+				.detail {
+					padding: 0.5rem 1rem 0.5rem 1rem;
+					display: flex;
+					font-size: larger;
+					font-weight: bold;
+					align-items: center;
+					gap: 0.5rem;
+					background-color: var(--orange);
+					line-height: 1rem;
+
+					.x {
+						line-height: 0;
+					}
+				}
 			}
 		}
 	}
