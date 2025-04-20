@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { base } from '$app/paths';
 	import type { UserProgram } from '$lib/schema.js';
+	import { Plus } from 'lucide-svelte';
 
 	let { data } = $props();
 	let userPrograms: UserProgram[] = $derived(data.userPrograms);
@@ -29,9 +30,10 @@
 		{/if}
 	</div>
 
-	<button class="add-program-btn" onclick={async () => await goto(base + '/program/new')}
-		>Add workout</button
-	>
+	<button class="add-program-btn" onclick={async () => await goto(base + '/program/new')}>
+		<Plus size="16" />
+		<div>Add workout</div>
+	</button>
 </div>
 
 <style>
@@ -57,6 +59,10 @@
 		padding: 0.5rem;
 		border: 2px solid var(--border);
 		margin: 0.5rem 0 0.5rem 0;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 0.5rem;
 	}
 
 	.page {
