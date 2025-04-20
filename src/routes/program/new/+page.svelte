@@ -78,6 +78,18 @@
 		}
 		popupExercice = undefined;
 		dialogOpen = false;
+		dialog.returnValue = 'NOT OK';
+	}}
+	onclick={(event) => {
+		const dialogDimensions = dialog.getBoundingClientRect();
+		if (
+			event.clientX < dialogDimensions.left ||
+			event.clientX > dialogDimensions.right ||
+			event.clientY < dialogDimensions.top ||
+			event.clientY > dialogDimensions.bottom
+		) {
+			dialog.close('NOT OK');
+		}
 	}}
 >
 	<!-- Needed because OptionsWheel needs to determine the height
@@ -102,7 +114,6 @@
 				<div>Sets</div>
 			</div>
 			<div class="actions">
-				<button onclick={() => dialog.close('NOT OK')}>Cancel</button>
 				<input type="submit" value="OK" />
 			</div>
 		</form>
@@ -129,6 +140,8 @@
 									<button
 										class="ex-info"
 										onclick={() => {
+											setsValueIndex = setOptions.indexOf(ex.sets);
+											repsValueIndex = repOptions.indexOf(ex.reps);
 											openExerciceModal(ex);
 										}}
 									>
@@ -217,20 +230,6 @@
 					font-size: medium;
 				}
 
-				.detail {
-					padding: 0.5rem 1rem 0.5rem 1rem;
-					display: flex;
-					font-size: larger;
-					font-weight: bold;
-					align-items: center;
-					gap: 0.5rem;
-					background-color: var(--orange);
-					line-height: 1rem;
-
-					.x {
-						line-height: 0;
-					}
-				}
 			}
 		}
 	}

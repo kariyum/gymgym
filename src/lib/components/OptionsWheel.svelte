@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { onMount } from "svelte";
+
 	interface Props {
 		options: string[] | number[];
 		selectedIndex?: number;
@@ -36,12 +38,13 @@
 	let singleElementHeight: number;
 	let triggerOffset: number;
 
-	$effect(() => {
+	onMount(() => {
 		gap = parseInt(getComputedStyle(container).gap.slice(0, 2));
 		singleElementHeight = singleElement.offsetHeight;
 		triggerOffset = Math.round(singleElementHeight / 2 + gap / 2);
 		console.debug('Trigger offset is ', triggerOffset);
 		console.debug('Gap is ', gap);
+		console.log('singleElementHeight = ', singleElementHeight);
 	});
 </script>
 
@@ -134,17 +137,6 @@
 				right: 0;
 				text-align: center;
 				font-family: monospace;
-			}
-
-			button {
-				background-color: transparent;
-				border: none;
-				font-size: inherit;
-				cursor: auto;
-			}
-
-			button:empty {
-				visibility: hidden;
 			}
 		}
 	}
