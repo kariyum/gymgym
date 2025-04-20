@@ -10,16 +10,16 @@
 	ul {
 		display: flex;
 		flex-direction: row nowrap;
-		justify-content: space-around;
 		background-color: var(--navbar-color);
-		padding: 1rem;
-
+		
 		li {
-			flex: 1;
 			list-style: none;
 			align-self: center;
 			text-align: center;
+			flex: 1;
 			a {
+				display: block;
+				padding: 1rem;
 				text-decoration: none;
 				color: inherit;
 				padding: 1rem;
