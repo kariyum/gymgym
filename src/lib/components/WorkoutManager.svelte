@@ -80,7 +80,7 @@
 	let setsValueIndex: number = $state(0);
 	let repsValueIndex: number = $state(0);
 	let title: string = $derived(props.workout?.title ?? '');
-
+    
 	const repOptions = Array(15)
 		.fill(0)
 		.map((_, i) => i + 1)
