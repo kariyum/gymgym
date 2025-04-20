@@ -88,9 +88,12 @@
 		if (db) {
 			userProgamsRepo.insertUserProgram(db, userProgram);
 			if (props.workout) {
-				await goto(base + `/program/${props.workout.title}`, { invalidateAll: true });
+				await goto(base + `/program/${encodeURIComponent(props.workout.title)}/`, {
+					invalidateAll: true,
+					replaceState: true
+				});
 			} else {
-				await goto(base + '/', { invalidateAll: true });
+				await goto(base + '/', { invalidateAll: true, replaceState: true });
 			}
 		} else {
 			console.error('Failed to get db instance to insert user programs');
