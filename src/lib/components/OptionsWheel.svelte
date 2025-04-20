@@ -1,13 +1,12 @@
 <script lang="ts">
+	import { onMount, tick } from 'svelte';
+
 	interface Props {
 		options: string[] | number[];
 		selectedIndex?: number;
 	}
-	let { 
-		options, 
-		selectedIndex = $bindable(Math.floor(options.length / 2))
-	}: Props = $props();
-	
+	let { options, selectedIndex = $bindable(Math.floor(options.length / 2)) }: Props = $props();
+
 	let dragging = $state(false);
 	let startPosition = $state(0);
 	let currentPosition = $state(0);
@@ -37,11 +36,15 @@
 	let triggerOffset: number;
 
 	$effect(() => {
-		gap = parseInt(getComputedStyle(container).gap.slice(0, 2));
-		singleElementHeight = singleElement.offsetHeight;
-		triggerOffset = Math.round(singleElementHeight / 2 + gap / 2);
-		console.debug('Trigger offset is ', triggerOffset);
-		console.debug('Gap is ', gap);
+		singleElement.offsetHeight;
+		tick().then(() => {
+			gap = parseInt(getComputedStyle(container).gap.slice(0, 2));
+			singleElementHeight = singleElement.getBoundingClientRect().height;
+			triggerOffset = Math.round(singleElementHeight / 2 + gap / 2);
+			console.debug('Trigger offset is ', triggerOffset);
+			console.debug('Gap is ', gap);
+			console.log('singleElementHeight = ', singleElementHeight);
+		});
 	});
 </script>
 
@@ -117,7 +120,7 @@
 			position: relative;
 			justify-content: center;
 			transform: translateY(var(--offsetY));
-			top: -2.7rem;
+			top: -3rem;
 
 			& > :first-child {
 				color: var(--border);
@@ -133,8 +136,8 @@
 				position: relative;
 				right: 0;
 				text-align: center;
-				font-family: 'Roboto Mono', Consolas, 'Courier New', monospace;
-
+				font-family: 'Space Mono', monospace;
+				line-height: 3rem;
 			}
 		}
 	}
