@@ -17,13 +17,25 @@
 		selected: boolean;
 	}
 	let availableExercices: ExtendedExercice[] = $derived.by(() => {
-		const userExercices = props.workout?.exercices.map((w) => w.title);
 		const arr = props.exercices.map((exercice) => {
-			let element = $state({
-				exercice: exercice,
-				selected: userExercices?.includes(exercice.title) ?? false
-			});
-			return element;
+			const userExercice = props.workout?.exercices?.find((ex) => ex.title == exercice.title);
+			if (userExercice) {
+				let element = $state({
+					exercice: {
+						...exercice,
+						reps: userExercice.reps,
+						sets: userExercice.sets
+					},
+					selected: true
+				});
+				return element;
+			} else {
+				let element = $state({
+					exercice: exercice,
+					selected: false
+				});
+				return element;
+			}
 		});
 		return arr;
 	});
@@ -371,7 +383,6 @@
 			.actions {
 				display: flex;
 				background-color: var(--background-color);
-				button,
 				input {
 					cursor: pointer;
 					flex: 1;
