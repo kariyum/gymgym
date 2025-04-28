@@ -1,4 +1,5 @@
 export interface UserProgram {
+    id?: number,
     title: string,
     exercices: Exercice[],
 }

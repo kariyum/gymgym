@@ -52,21 +52,9 @@ export class Database {
     }
 
     private initSchema(db: IDBDatabase) {
-        db.createObjectStore('user_programs', { keyPath: 'title' });
+        db.createObjectStore('user_programs', { keyPath: 'id', autoIncrement: true });
     }
 
-}
-class Deferred<T> {
-    public promise: Promise<T>;
-    public resolve!: (value: T) => void;
-    public reject!: (reason?: any) => void;
-
-    constructor() {
-        this.promise = new Promise<T>((resolve, reject) => {
-            this.resolve = resolve;
-            this.reject = reject;
-        });
-    }
 }
 
 export const userProgamsRepo = {
@@ -87,24 +75,34 @@ export const userProgamsRepo = {
 
 
     insertUserProgram: (db: IDBDatabase, data: UserProgram) => {
-        const transaction = db.transaction("user_programs", "readwrite");
-        const result = transaction.objectStore("user_programs").put(JSON.parse(JSON.stringify(data)));
-        result.onerror = (event) => {
-            console.log("Failed to insert user program...", event);
-        }
-        result.onsuccess = () => {
-            console.log("User program inserted");
-        }
+        return new Promise((resolve, reject) => {
+            console.log("INSERTING", JSON.parse(JSON.stringify(data)));
+            const transaction = db.transaction("user_programs", "readwrite");
+            const result = transaction.objectStore("user_programs").put(JSON.parse(JSON.stringify(data)));
+            result.onerror = (event) => {
+                console.log("Failed to insert user program...", event.target);
+                reject(event);
+            }
+            result.onsuccess = () => {
+                // console.log("User program inserted", event?.target.result);
+                resolve("OK");
+            }
+
+        })
     },
 
-    deleteUserProgram: (db: IDBDatabase, title: string) => {
-        const transaction = db.transaction("user_programs", "readwrite");
-        const result = transaction.objectStore("user_programs").delete(title);
-        result.onerror = (event) => {
-            console.log("Failed to delete user program...", event);
-        }
-        result.onsuccess = () => {
-            console.log("User program deleted");
-        }
+    deleteUserProgram: (db: IDBDatabase, id: number) => {
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction("user_programs", "readwrite");
+            const result = transaction.objectStore("user_programs").delete(id);
+            result.onerror = (event) => {
+                console.log("Failed to delete user program...", event);
+                reject("NOT OK");
+            }
+            result.onsuccess = () => {
+                console.log("User program deleted");
+                resolve("OK")
+            }
+        });
     }
 }

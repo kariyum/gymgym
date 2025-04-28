@@ -15,7 +15,7 @@
 			<p>You have no programs saved yet!</p>
 		{:else}
 			{#each userPrograms as up, i}
-				<a href={base + '/program/' + encodeURIComponent(up.title)} class="exercice">
+				<a href={base + '/program/' + encodeURIComponent(up.id ?? "0")} class="exercice">
 					<h3>{up.title}</h3>
 					<div style="margin-left: 1rem;">
 						{#each up.exercices as ex}

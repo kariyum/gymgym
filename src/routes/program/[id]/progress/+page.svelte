@@ -7,7 +7,7 @@
 
 {#if workout}
 	<div class="page">
-		<h1 style="margin: 1rem;">{workout.title}</h1>
+		<h3 style="margin: 1rem;">{workout.title}</h3>
 		<div class="container">
 			{#each workout.exercices as ex}
 				<div class="card">
@@ -49,7 +49,7 @@
 		gap: 1rem;
 		height: 100%;
 		width: 100%;
-		padding: 1rem;
+		padding: 0 1rem 1rem 1rem;
 		scroll-snap-type: x mandatory;
 		scroll-behavior: smooth;
 

@@ -93,14 +93,15 @@
 
 	async function insertProgram() {
 		const userProgram: UserProgram = {
+			id: props.workout?.id,
 			title: title,
 			exercices: selectedExercices
 		};
 		const db = (await Database.getInstance()).db;
 		if (db) {
-			userProgamsRepo.insertUserProgram(db, userProgram);
-			if (props.workout) {
-				await goto(base + `/program/${encodeURIComponent(props.workout.title)}/`, {
+			await userProgamsRepo.insertUserProgram(db, userProgram);
+			if (props.workout && props.workout.id) {
+				await goto(base + `/program/${encodeURIComponent(props.workout.id)}/`, {
 					invalidateAll: true,
 					replaceState: true
 				});
@@ -173,8 +174,8 @@
 					onclick={async () => {
 						if (!props.workout) return;
 						const db = (await Database.getInstance()).db;
-						if (!db) return;
-						userProgamsRepo.deleteUserProgram(db, props.workout.title);
+						if (!db || !props.workout.id) return;
+						userProgamsRepo.deleteUserProgram(db, props.workout.id);
 						await goto(base + '/', { invalidateAll: true });
 					}}
 				>

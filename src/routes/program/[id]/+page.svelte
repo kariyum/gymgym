@@ -10,14 +10,14 @@
 	<div class="container">
 		<div class="header">
 			<h1>{workout.title}</h1>
-			<a href={base + `/program/${encodeURIComponent(workout.title)}/update`}>Edit</a>
+			<a href={base + `/program/${encodeURIComponent(workout.id ?? 0)}/update`}>Edit</a>
 		</div>
 		<div class="exercice">
 			{#each workout.exercices as ex}
 				<p>{ex.reps} x {ex.sets} {ex.title}</p>
 			{/each}
 		</div>
-		<a href={`${base}/program/${encodeURIComponent(workout.title)}/progress`} class="start-action"
+		<a href={`${base}/program/${encodeURIComponent(workout.id ?? 0)}/progress`} class="start-action"
 			>Start workout</a
 		>
 	</div>
