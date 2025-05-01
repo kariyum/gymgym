@@ -69,7 +69,10 @@
 	}
 
 	function openExerciceModal(ex: Exercice) {
+		setsValueIndex = setOptions.indexOf(ex.sets);
+		repsValueIndex = repOptions.indexOf(ex.reps);
 		popupExercice = ex;
+		console.log('Setvalueindex', setsValueIndex);
 		dialog.showModal();
 		dialogOpen = true;
 	}
@@ -80,7 +83,7 @@
 	let setsValueIndex: number = $state(0);
 	let repsValueIndex: number = $state(0);
 	let title: string = $derived(props.workout?.title ?? '');
-    
+
 	const repOptions = Array(15)
 		.fill(0)
 		.map((_, i) => i + 1)
@@ -118,8 +121,6 @@
 	bind:this={dialog}
 	onclose={() => {
 		if (dialog.returnValue === 'OK' && popupExercice) {
-			console.debug('Sets = ', setsValueIndex);
-			console.debug('Reps = ', repsValueIndex);
 			selectExercice(popupExercice.title);
 		}
 		popupExercice = undefined;
@@ -138,10 +139,8 @@
 		}
 	}}
 >
-	<!-- Needed because OptionsWheel needs to determine the height
-	  of an element when it's mounted to the DOM and not displayed.. -->
-	{#if dialogOpen}
-		<form method="dialog">
+	<form method="dialog">
+		{#if dialogOpen}
 			<div class="container">
 				<div aria-label="sets">
 					<div class="value-container">
@@ -162,8 +161,8 @@
 			<div class="actions">
 				<input type="submit" value="OK" />
 			</div>
-		</form>
-	{/if}
+		{/if}
+	</form>
 </dialog>
 
 <section>
@@ -202,8 +201,6 @@
 									<button
 										class="ex-info"
 										onclick={() => {
-											setsValueIndex = setOptions.indexOf(ex.sets);
-											repsValueIndex = repOptions.indexOf(ex.reps);
 											openExerciceModal(ex);
 										}}
 									>

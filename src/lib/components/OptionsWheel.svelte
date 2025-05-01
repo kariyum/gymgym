@@ -1,161 +1,93 @@
 <script lang="ts">
-	import { onMount } from "svelte";
-	import { Database } from "$lib/db";
+	import { onMount, tick, untrack } from 'svelte';
 
 	interface Props {
 		options: string[] | number[];
 		selectedIndex?: number;
 	}
-	let { 
-		options, 
-		selectedIndex = $bindable(Math.floor(options.length / 2))
-	}: Props = $props();
-	
-	let dragging = $state(false);
-	let startPosition = $state(0);
-	let currentPosition = $state(0);
-	let offsetY = $derived(currentPosition - startPosition);
-	let offsetYcss = $derived(offsetY.toString() + 'px');
+	let { options, selectedIndex = $bindable(Math.floor(options.length / 2)) }: Props = $props();
+	let sections: HTMLDivElement[] = $state([]);
 
-	async function selectNext() {
-		singleElement.classList.remove('flash');
-		void singleElement.offsetWidth; // Force reflow
-		selectedIndex = Math.min(selectedIndex + 1, options.length - 1);
-		singleElement.classList.add('flash');
-		navigator.vibrate(15);
-	}
-
-	async function selectPrevious() {
-		singleElement.classList.remove('flash');
-		void singleElement.offsetWidth; // Force reflow
-		selectedIndex = Math.max(selectedIndex - 1, 0);
-		singleElement.classList.add('flash');
-		navigator.vibrate(15);
-	}
-
-	let container: HTMLDivElement;
-	let singleElement: HTMLDivElement;
-	let gap: number;
-	let singleElementHeight: number;
-	let triggerOffset: number;
-	let database;
 	onMount(() => {
-		database = Database.getInstance();
-		gap = parseInt(getComputedStyle(container).gap.slice(0, 2));
-		singleElementHeight = singleElement.offsetHeight;
-		triggerOffset = Math.round(singleElementHeight / 2 + gap / 2);
-		console.debug('Trigger offset is ', triggerOffset);
-		console.debug('Gap is ', gap);
-		console.debug('singleElementHeight = ', singleElementHeight);
-	});
-
-	function saveProgram() {
-	}
-</script>
-
-<svelte:document
-	onmouseup={(event) => {
-		dragging = false;
-		offsetY = 0;
-	}}
-	ontouchend={(event) => {
-		dragging = false;
-		offsetY = 0;
-	}}
-	ontouchmove={(event) => {
-		if (dragging) {
-			const futureDirection = event.touches[0].clientY - startPosition;
-			if (offsetY < 0 && selectedIndex == 0 && futureDirection < 0) return;
-			if (offsetY > 0 && selectedIndex == options.length - 1 && futureDirection > 0) return;
-			currentPosition = event.touches[0].clientY;
-			if (Math.abs(offsetY) >= triggerOffset) {
-				if (offsetY > 0) {
-					selectNext();
-					startPosition = currentPosition + triggerOffset;
-				} else {
-					selectPrevious();
-					startPosition = currentPosition - triggerOffset;
-				}
+		sections[selectedIndex].scrollIntoView({ behavior: 'instant' });
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					const htmlElement = entry.target as HTMLElement;
+					if (entry.isIntersecting) {
+						selectedIndex = parseInt(htmlElement.dataset.section ?? '0');
+						navigator.vibrate(15);
+					}
+				});
+			},
+			{
+				threshold: 0.5,
+				rootMargin: '0px'
 			}
-		}
-	}}
-/>
+		);
+
+		sections.forEach((section) => {
+			observer.observe(section);
+		});
+
+		return () => {
+			sections.forEach((section) => {
+				observer.unobserve(section);
+			});
+		};
+	});
+</script>
 
 <div class="container">
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div
-		bind:this={container}
-		class="sets-container"
-		style:--offsetY={offsetYcss}
-		style:transition={dragging ? 'none' : 'transform 0.2s ease-in-out'}
-		onmousedown={(event) => {
-			dragging = true;
-			currentPosition = event.clientY;
-			startPosition = event.clientY;
-		}}
-		ontouchstart={(event) => {
-			dragging = true;
-			currentPosition = event.touches[0].clientY;
-			startPosition = event.touches[0].clientY;
-		}}
-	>
-		<div>
-			{options[selectedIndex + 1]?.toString().padStart(2, '0') ?? ''}
-		</div>
-		<div bind:this={singleElement}>{options.at(selectedIndex)?.toString().padStart(2, '0')}</div>
-		<div>
-			{options[selectedIndex - 1]?.toString().padStart(2, '0') ?? ''}
-		</div>
+	<div class="sets-container">
+		{#each options as opt, section}
+			<div
+				bind:this={sections[section]}
+				data-section={section}
+				data-selected={selectedIndex == section}
+			>
+				{opt.toString().padStart(2, '0')}
+			</div>
+		{/each}
 	</div>
 </div>
 
 <style>
 	.container {
-		overflow: hidden;
-		height: 4rem;
 		width: 100%;
+		height: 3rem;
 
 		.sets-container {
-			touch-action: none;
-			display: grid;
-			grid-template-rows: 1fr 1fr 1fr;
-			gap: 0.5rem;
+			height: 3rem;
+			width: 100%;
+			overflow: auto;
+			scroll-snap-type: y mandatory;
+			text-align: center;
+			flex: none;
 			font-size: 2rem;
-			overflow: hidden;
-			position: relative;
-			justify-content: center;
-			transform: translateY(var(--offsetY));
-			top: -2rem;
+			display: flex;
+			flex-direction: column;
+			gap: 0.5rem;
+			padding: 1rem 0;
 
-			& > :first-child {
-				color: var(--border);
-			}
-
-			& > :last-child {
-				color: var(--border);
+			&::-webkit-scrollbar {
+				display: none;
 			}
 
 			& > * {
+				color: var(--font-color);
+				scroll-snap-align: center;
+				flex-grow: 1;
 				font-weight: 500;
 				min-width: 2ch;
-				position: relative;
-				right: 0;
-				text-align: center;
 				font-family: monospace;
+				transition: color 0.3s ease-in-out;
 			}
-		}
-	}
 
-	:global(.flash) {
-		animation: greyFlash 0.5s ease;
-	}
-
-	@keyframes greyFlash {
-		from {
-			color: var(--border);
-		}
-		to {
-			color: white;
+			& > [data-selected='false'] {
+				color: var(--border);
+			}
 		}
 	}
 </style>
