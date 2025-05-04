@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Exercice } from '$lib/schema';
-	import Repset from './Repset.svelte';
+	import Repset from './RepsetDetails.svelte';
 
 	let { exercice }: { exercice: Exercice } = $props();
 </script>
@@ -16,7 +16,7 @@
         margin-bottom: 0.5rem;
 
         p {
-            padding: 0.5rem;
+            padding: 0.5rem 0;
             font-size: large;
         }
     }

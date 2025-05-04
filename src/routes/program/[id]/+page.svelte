@@ -2,7 +2,7 @@
 	import { base } from '$app/paths';
 	import { page } from '$app/state';
 	import ExerciceDetails from '$lib/components/ExerciceDetails.svelte';
-	import Repset from '$lib/components/Repset.svelte';
+	import Repset from '$lib/components/RepsetDetails.svelte';
 	import { X } from 'lucide-svelte';
 
 	let { data } = $props();

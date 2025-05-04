@@ -1,4 +1,6 @@
 <script lang="ts">
+	import Repset from '$lib/components/RepsetDetails.svelte';
+	import RepsetProgress from '$lib/components/RepsetProgress.svelte';
 	import { X } from 'lucide-svelte';
 
 	let { data } = $props();
@@ -11,24 +13,9 @@
 		<div class="container">
 			{#each workout.exercices as ex}
 				<div class="card">
-					<h1 class="title">{ex.title}</h1>
-					<div class="ex-details">
-						<div>{ex.reps.padStart(2, '0')}</div>
-						<X />
-						<div>{ex.sets.padStart(2, '0')}</div>
-					</div>
+					<h2 class="title">{ex.title}</h2>
 					<div class="details">
-						<h2>Remaining</h2>
-						{#each Array(parseInt(ex.sets)).fill(0) as x, i}
-							<div class="set-container">
-								<div class="index">{i + 1}</div>
-								<div class="set">
-									<div>1</div>
-									<X />
-									<div>{ex.sets}</div>
-								</div>
-							</div>
-						{/each}
+						<RepsetProgress repset={ex.repset}  />
 					</div>
 				</div>
 			{/each}

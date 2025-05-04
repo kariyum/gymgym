@@ -193,23 +193,23 @@
 					{#key redraw}
 						<div style="width: 100%;">
 							<div class="container">
-								<div aria-label="reps">
-									<div class="value-container">
-										<OptionsWheel options={setOptions} bind:selectedIndex={repsetIndex.setIndex}
-										></OptionsWheel>
-									</div>
-								</div>
-								<X size="48" />
 								<div aria-label="sets">
 									<div class="value-container">
 										<OptionsWheel options={repOptions} bind:selectedIndex={repsetIndex.repIndex}
 										></OptionsWheel>
 									</div>
 								</div>
+								<X size="48" />
+								<div aria-label="reps">
+									<div class="value-container">
+										<OptionsWheel options={setOptions} bind:selectedIndex={repsetIndex.setIndex}
+										></OptionsWheel>
+									</div>
+								</div>
 							</div>
 							<div class="description">
-								<div>Sets</div>
 								<div>Reps</div>
+								<div>Sets</div>
 							</div>
 						</div>
 					{/key}
