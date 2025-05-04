@@ -13,10 +13,14 @@ export interface WorkoutProgram {
 export interface Exercice {
     title: string,
     muscle_groups: string[],
-    reps: string, // can be inf
-    sets: string, // can be inf
+    repset: Repset[],
     average_weight?: number,
     weight_per_set?: WeightPerSet[],
+}
+
+export interface Repset {
+    reps: string,
+    sets: string
 }
 
 export interface WeightPerSet {

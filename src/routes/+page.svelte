@@ -19,7 +19,7 @@
 					<h3>{up.title}</h3>
 					<div style="margin-left: 1rem;">
 						{#each up.exercices as ex}
-							<p>{ex.reps} x {ex.sets} {ex.title}</p>
+							<p>{ex.title}</p>
 						{/each}
 					</div>
 				</a>

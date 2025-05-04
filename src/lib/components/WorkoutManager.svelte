@@ -3,8 +3,8 @@
 	import { base } from '$app/paths';
 	import OptionsWheel from '$lib/components/OptionsWheel.svelte';
 	import { Database, userProgamsRepo } from '$lib/db';
-	import type { Exercice, UserProgram } from '$lib/schema';
-	import { Minus, Trash, X } from 'lucide-svelte';
+	import type { Exercice, Repset, UserProgram } from '$lib/schema';
+	import { Minus, Plus, Trash, X } from 'lucide-svelte';
 
 	interface Props {
 		exercices: Exercice[];
@@ -16,6 +16,10 @@
 		exercice: Exercice;
 		selected: boolean;
 	}
+	interface RepsetIndex {
+		repIndex: number;
+		setIndex: number;
+	}
 	let availableExercices: ExtendedExercice[] = $derived.by(() => {
 		const arr = props.exercices.map((exercice) => {
 			const userExercice = props.workout?.exercices?.find((ex) => ex.title == exercice.title);
@@ -23,8 +27,7 @@
 				let element = $state({
 					exercice: {
 						...exercice,
-						reps: userExercice.reps,
-						sets: userExercice.sets
+						repset: userExercice.repset
 					},
 					selected: true
 				});
@@ -41,6 +44,16 @@
 	});
 
 	let exercices: ExtendedExercice[] = $derived(availableExercices);
+	// exercices[0].exercice.repset = [
+	// 	{
+	// 		reps: '1',
+	// 		sets: '1'
+	// 	},
+	// 	{
+	// 		reps: '1',
+	// 		sets: '1'
+	// 	}
+	// ];
 	let selectedExercices: Exercice[] = $derived(
 		exercices.filter((exercice) => exercice.selected).map((exercice) => exercice.exercice)
 	);
@@ -59,20 +72,26 @@
 		let exercice = exercices.find((exercice) => exercice.exercice.title == title);
 		if (exercice) {
 			exercice.selected = true;
-			updateExercice(exercice.exercice);
+			exercice.exercice.repset = repsetsIndexes.map((repset) => {
+				return {
+					reps: repOptions.at(repset.repIndex) ?? 'custom undefined',
+					sets: setOptions.at(repset.setIndex) ?? 'custom undefined'
+				};
+			});
 		}
 	}
 
-	function updateExercice(exercice: Exercice) {
-		exercice.sets = setOptions[setsValueIndex];
-		exercice.reps = repOptions[repsValueIndex];
-	}
-
 	function openExerciceModal(ex: Exercice) {
-		setsValueIndex = setOptions.indexOf(ex.sets);
-		repsValueIndex = repOptions.indexOf(ex.reps);
+		repsetsIndexes = ex.repset.map((repset) => {
+			return {
+				repIndex: repOptions.indexOf(repset.reps),
+				setIndex: setOptions.indexOf(repset.sets)
+			};
+		});
+		if (repsetsIndexes.length == 0) {
+			resetCustomSet();
+		}
 		popupExercice = ex;
-		console.log('Setvalueindex', setsValueIndex);
 		dialog.showModal();
 		dialogOpen = true;
 	}
@@ -80,10 +99,14 @@
 	let dialog: HTMLDialogElement;
 	let dialogOpen: boolean = $state(false);
 	let popupExercice: Exercice | undefined = $state();
-	let setsValueIndex: number = $state(0);
-	let repsValueIndex: number = $state(0);
+	let repsetsIndexes: RepsetIndex[] = $state([
+		{
+			repIndex: 0,
+			setIndex: 0
+		}
+	]);
 	let title: string = $derived(props.workout?.title ?? '');
-
+	let redraw: boolean = $state(false);
 	const repOptions = Array(15)
 		.fill(0)
 		.map((_, i) => i + 1)
@@ -115,6 +138,17 @@
 			console.error('Failed to get db instance to insert user programs');
 		}
 	}
+
+	function addCustomSet() {
+		repsetsIndexes.push({
+			repIndex: 0,
+			setIndex: 0
+		});
+	}
+
+	function resetCustomSet() {
+		repsetsIndexes = [{ repIndex: 0, setIndex: 0 }];
+	}
 </script>
 
 <dialog
@@ -126,6 +160,7 @@
 		popupExercice = undefined;
 		dialogOpen = false;
 		dialog.returnValue = 'NOT OK';
+		resetCustomSet();
 	}}
 	onclick={(event) => {
 		const dialogDimensions = dialog.getBoundingClientRect();
@@ -141,23 +176,51 @@
 >
 	<form method="dialog">
 		{#if dialogOpen}
-			<div class="container">
-				<div aria-label="sets">
-					<div class="value-container">
-						<OptionsWheel options={repOptions} bind:selectedIndex={repsValueIndex}></OptionsWheel>
-					</div>
+			{#each repsetsIndexes as repsetIndex, index}
+				<div class="dialog-section">
+					{#if index > 0}
+						<button
+							type="button"
+							onclick={() => {
+								repsetsIndexes.splice(index, 1);
+								redraw = !redraw;
+							}}
+							class="remove-repset"
+						>
+							<Minus />
+						</button>
+					{/if}
+					{#key redraw}
+						<div style="width: 100%;">
+							<div class="container">
+								<div aria-label="reps">
+									<div class="value-container">
+										<OptionsWheel options={setOptions} bind:selectedIndex={repsetIndex.setIndex}
+										></OptionsWheel>
+									</div>
+								</div>
+								<X size="48" />
+								<div aria-label="sets">
+									<div class="value-container">
+										<OptionsWheel options={repOptions} bind:selectedIndex={repsetIndex.repIndex}
+										></OptionsWheel>
+									</div>
+								</div>
+							</div>
+							<div class="description">
+								<div>Sets</div>
+								<div>Reps</div>
+							</div>
+						</div>
+					{/key}
 				</div>
-				<X size="48" />
-				<div aria-label="reps">
-					<div class="value-container">
-						<OptionsWheel options={setOptions} bind:selectedIndex={setsValueIndex}></OptionsWheel>
-					</div>
-				</div>
+			{/each}
+			<div class="plus-container">
+				<button type="button" class="plus" onclick={() => addCustomSet()}>
+					<Plus />
+				</button>
 			</div>
-			<div class="description">
-				<div>Reps</div>
-				<div>Sets</div>
-			</div>
+
 			<div class="actions">
 				<input type="submit" value="OK" />
 			</div>
@@ -193,24 +256,27 @@
 				<div class="exercices">
 					{#if selectedExercices.length != 0}
 						{#each selectedExercices as ex}
-							<div class="selected-exercice">
-								<div class="exercice">
-									<div class="name">{ex.title}</div>
+							<!-- svelte-ignore a11y_click_events_have_key_events -->
+							<!-- svelte-ignore a11y_no_static_element_interactions -->
+							<div
+								class="selected-exercice-container"
+								onclick={() => {
+									openExerciceModal(ex);
+								}}
+							>
+								<div class="selected-exercice">
+									<div class="exercice">
+										<div class="name">{ex.title}</div>
+									</div>
 								</div>
-								<div style="display: flex; gap:1rem;">
-									<button
-										class="ex-info"
-										onclick={() => {
-											openExerciceModal(ex);
-										}}
-									>
-										<div>{ex.reps.toString().padStart(2, '0')}</div>
-										<X size="14" />
-										<div>{ex.sets.toString().padStart(2, '0')}</div>
-									</button>
-									<button class="action" onclick={() => deselectExercice(ex.title)}>
-										<Minus />
-									</button>
+								<div class="exercice-details">
+									{#each ex.repset as repset}
+										<div class="repset">
+											<div>{repset.reps.toString().padStart(2, '0')}</div>
+											<X size="14" />
+											<div>{repset.sets.toString().padStart(2, '0')}</div>
+										</div>
+									{/each}
 								</div>
 							</div>
 						{/each}
@@ -322,7 +388,7 @@
 
 	dialog {
 		position: absolute;
-		width: 15rem;
+		min-width: 17rem;
 		top: 50%;
 		left: 50%;
 		border: 2px solid var(--border);
@@ -380,8 +446,8 @@
 
 			.actions {
 				display: flex;
-				background-color: var(--background-color);
 				input {
+					background-color: var(--background-color);
 					cursor: pointer;
 					flex: 1;
 					padding: 0.5rem 1rem;
@@ -435,5 +501,58 @@
 			border: none;
 			background-color: transparent;
 		}
+	}
+
+	.dialog-section {
+		position: relative;
+		display: flex;
+		width: 100%;
+		justify-content: space-around;
+		align-items: center;
+		padding: 1rem 1rem 0 1rem;
+	}
+
+	.plus {
+		width: 100%;
+		background-color: hsl(100, 0%, 15%);
+		display: flex;
+		justify-content: center;
+		padding: 0.2rem;
+		border-radius: 5px;
+		border: none;
+	}
+
+	.plus-container {
+		padding: 1rem;
+	}
+
+	.remove-repset {
+		position: absolute;
+		left: 0.5rem;
+		top: 2rem;
+
+		border: none;
+		background-color: transparent;
+	}
+
+	.exercice-details {
+		background-color: hsla(197, 8%, 17%, 0.5);
+		padding-left: 1.5rem;
+		padding-bottom: 1rem;
+		padding-top: 1rem;
+		margin: 0 0.5rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.repset {
+		display: flex;
+		gap: 0.5rem;
+		align-items: center;
+	}
+
+	.selected-exercice-container {
+		border: none;
 	}
 </style>

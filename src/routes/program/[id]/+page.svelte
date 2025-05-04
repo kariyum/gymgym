@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { base } from '$app/paths';
 	import { page } from '$app/state';
+	import ExerciceDetails from '$lib/components/ExerciceDetails.svelte';
+	import Repset from '$lib/components/Repset.svelte';
+	import { X } from 'lucide-svelte';
 
 	let { data } = $props();
 	let workout = $derived(data.userProgram);
@@ -14,7 +17,7 @@
 		</div>
 		<div class="exercice">
 			{#each workout.exercices as ex}
-				<p>{ex.reps} x {ex.sets} {ex.title}</p>
+				<ExerciceDetails exercice={ex} />
 			{/each}
 		</div>
 		<a href={`${base}/program/${encodeURIComponent(workout.id ?? 0)}/progress`} class="start-action"
@@ -54,10 +57,9 @@
 	}
 
 	.exercice {
-		margin: 1rem;
-
-		p {
-			margin: 0.5rem 0;
-		}
+		margin: 0.5rem;
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
 	}
 </style>

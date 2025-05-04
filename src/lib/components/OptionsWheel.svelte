@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, tick, untrack } from 'svelte';
+	import { onMount } from 'svelte';
 
 	interface Props {
 		options: string[] | number[];
